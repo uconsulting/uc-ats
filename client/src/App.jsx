@@ -40,6 +40,7 @@ import MemberMeetingSlots from './pages/MemberMeetingSlots';
 import CandidateList from './pages/CandidateList';
 import CandidateDetail from './pages/CandidateDetail';
 import NotFound from './pages/NotFound';
+import PausedLanding from './pages/PausedLanding';
 import './styles/variables.css';
 // Protected Route wrapper for admin/member users
 const ProtectedRoute = ({ children }) => {
@@ -70,8 +71,11 @@ const AppRoutes = () => {
       <Route path="/signup" element={<SignUp />} />
       <Route path="/member-signup" element={<MemberSignUp />} />
       
+      {/* Paused Landing Page - shown to all visitors */}
+      <Route path="/" element={<PausedLanding />} />
+      
       {/* Protected Routes - Different content based on user role */}
-      <Route path="/" element={
+      <Route path="/dashboard" element={
         <ProtectedRoute>
           {user?.role === 'USER' ? <CandidateDashboard /> : 
            user?.role === 'MEMBER' ? <MemberDashboard /> : <Dashboard />}
