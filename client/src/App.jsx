@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Route, Routes, Navigate, useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Route, Routes, Navigate } from 'react-router-dom';
 import ApplicationList from './pages/ApplicationList';
 import ApplicationDetail from './pages/ApplicationDetail';
 import Login from './pages/Login';
@@ -62,6 +62,25 @@ const ProtectedRoute = ({ children }) => {
   return <Layout>{children}</Layout>;
 };
 
+/** Paused landing for public & candidates; admins/members see their dashboard at /. */
+const HomeRoute = () => {
+  const { user, loading } = useAuth();
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (user?.role === 'ADMIN' || user?.role === 'MEMBER') {
+    return (
+      <ProtectedRoute>
+        {user.role === 'MEMBER' ? <MemberDashboard /> : <Dashboard />}
+      </ProtectedRoute>
+    );
+  }
+
+  return <PausedLanding />;
+};
+
 const AppRoutes = () => {
   const { user } = useAuth();
   
@@ -71,8 +90,7 @@ const AppRoutes = () => {
       <Route path="/signup" element={<SignUp />} />
       <Route path="/member-signup" element={<MemberSignUp />} />
       
-      {/* Paused Landing Page - shown to all visitors */}
-      <Route path="/" element={<PausedLanding />} />
+      <Route path="/" element={<HomeRoute />} />
       
       {/* Protected Routes - Different content based on user role */}
       <Route path="/dashboard" element={
